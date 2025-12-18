@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { ShoppingCart, User } from 'lucide-react';
 
 export default function Navbar() {
   const { user, loading } = useAuth();
@@ -24,22 +25,48 @@ export default function Navbar() {
   };
 
   return (
-    <nav className='"w-full border-b'>
+    <header className='" border-b'>
       <div className='mx-auto flex h-16 max-w-7xl items-center justify-between px-6'>
-        <Link href='/' className='font-semibold text-lg'>
+        <Link href='/' className='font-semibold text-lg tracking-tight'>
           Ecom
         </Link>
 
+        <nav className='hidden md:flex gap-6 text-sm'>
+          <Link href='/' className='hover:opacity-70'>
+            Shop
+          </Link>
+          <Link href='/' className='hover:opacity-70'>
+            Collections
+          </Link>
+          <Link href='/' className='hover:opacity-70'>
+            About
+          </Link>
+
+          {user?.role === 'Admin' && (
+            <Link
+              href='/admin'
+              className='text-primary font-medium hover:opacity-70'
+            >
+              Admin
+            </Link>
+          )}
+        </nav>
+
         <div className='flex items-center gap-4'>
+          <Link href='/cart' className='relative'>
+            <ShoppingCart className='h-5 w-5' />
+            <span className='absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-black text-xs text-white'>
+              0
+            </span>
+          </Link>
+
           {!loading && !user && (
-            <>
-              <Link href='/login'>
-                <Button variant='ghost'>Login</Button>
-              </Link>
-              <Link href='/signup'>
-                <Button>Sign up</Button>
-              </Link>
-            </>
+            <div className='flex gap-2'>
+              <Button variant='ghost' onClick={() => router.push('/login')}>
+                Login
+              </Button>
+              <Button onClick={() => router.push('/signup')}>Sign up</Button>
+            </div>
           )}
 
           {!loading && user && (
@@ -47,21 +74,13 @@ export default function Navbar() {
               <DropdownMenuTrigger>
                 <Avatar className='cursor-pointer'>
                   <AvatarFallback>
-                    {user.email?.charAt(0).toUpperCase()}
+                    <User className='h-4 w-4' />
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align='end'>
-                <div className='px-3 py-2 text-sm text-muted-foreground'>
-                  {user.email}
-                </div>
-
-                {user.role === 'Admin' && (
-                  <DropdownMenuItem asChild>
-                    <Link href='/admin'>Admin Panel</Link>
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem disabled>{user.email}</DropdownMenuItem>
 
                 <DropdownMenuItem onClick={handleLogout}>
                   Logout
@@ -71,6 +90,6 @@ export default function Navbar() {
           )}
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
