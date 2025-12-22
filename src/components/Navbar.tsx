@@ -25,7 +25,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className='" border-b'>
+    <header className='border-b'>
       <div className='mx-auto flex h-16 max-w-7xl items-center justify-between px-6'>
         <Link href='/' className='font-semibold text-lg tracking-tight'>
           Ecom

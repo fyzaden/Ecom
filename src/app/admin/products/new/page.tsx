@@ -1,74 +1,62 @@
 'use client';
 
-import { useState } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function NewProductPage() {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
+  const [images, setImages] = useState<string[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const uploadImage = async (file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
 
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    setImages((prev) => [...prev, data.url]);
+  };
+
+  const submit = async () => {
     await addDoc(collection(db, 'products'), {
       title,
-      price: {
-        amount: Number(price),
-        currency: 'EUR',
-      },
-      draft: false,
-      stock: 10,
+      price: { amount: Number(price), currency: 'EUR' },
+      images,
       category: 'general',
-      taxRate: 18,
+      stock: 10,
+      draft: false,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
 
     alert('Product created');
-    setTitle('');
-    setPrice('');
   };
 
   return (
     <ProtectedRoute role='Admin'>
-      <div className='flex justify-center p-6'>
-        <Card className='w-full max-w-md'>
-          <CardHeader>
-            <CardTitle>Create Product</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className='space-y-4'>
-              <div>
-                <Label>Title</Label>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                />
-              </div>
+      <div className='p-6 space-y-4 max-w-md'>
+        <Input placeholder='Title' onChange={(e) => setTitle(e.target.value)} />
+        <Input
+          type='number'
+          placeholder='Price'
+          onChange={(e) => setPrice(e.target.value)}
+        />
+        <Input
+          type='file'
+          onChange={(e) => e.target.files && uploadImage(e.target.files[0])}
+        />
 
-              <div>
-                <Label>Price</Label>
-                <Input
-                  type='number'
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  required
-                />
-              </div>
+        <div className='flex gap-2'>
+          {images.map((img) => (
+            <img key={img} src={img} className='w-20 h-20 rounded' />
+          ))}
+        </div>
 
-              <Button type='submit' className='w-full'>
-                Create
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <Button onClick={submit}>Create</Button>
       </div>
     </ProtectedRoute>
   );

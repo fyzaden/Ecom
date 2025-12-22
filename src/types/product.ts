@@ -5,12 +5,12 @@ export interface Product {
   brand: string;
   serialNumber: string;
   price: {
-    number: number;
+    amount: number;
     currency: string;
   };
   taxRate: number;
-  image: string;
-  carategory: string;
+  images: string[];
+  category: string;
   stock: number;
   draft: boolean;
   discount?: {
