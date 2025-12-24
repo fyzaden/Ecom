@@ -52,6 +52,10 @@ export default function NewProductPage() {
       updatedAt: serverTimestamp(),
     });
 
+    setTitle('');
+    setPrice('');
+    setImages([]);
+
     alert('Product created');
   };
 
