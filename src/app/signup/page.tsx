@@ -30,7 +30,6 @@ export default function SignupPage() {
 
       const user = userCredential.user;
 
-      // Firestore user creation
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
         role: 'Customer',

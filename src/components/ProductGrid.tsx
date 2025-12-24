@@ -11,7 +11,7 @@ export default function ProductGrid() {
             <CardContent className='p-4'>
               <div className='h-40 rounded-md bg-gray-100' />
               <h3 className='mt-4 font-medium'>Product Name</h3>
-              <p className='text-sm text-muted-foreground'>€99.00</p>
+              <p className='text-sm text-muted-foreground'>100 ₺</p>
             </CardContent>
           </Card>
         ))}

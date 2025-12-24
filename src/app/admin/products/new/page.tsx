@@ -11,22 +11,41 @@ export default function NewProductPage() {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
 
-  const uploadImage = async (file: File) => {
-    const fd = new FormData();
-    fd.append('file', file);
+  const uploadImages = async (files: FileList) => {
+    setUploading(true);
 
-    const res = await fetch('/api/upload', { method: 'POST', body: fd });
-    const data = await res.json();
-    setImages((prev) => [...prev, data.url]);
+    const uploadedUrls: string[] = [];
+
+    for (const file of Array.from(files)) {
+      const fd = new FormData();
+      fd.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: fd,
+      });
+
+      const data = await res.json();
+      uploadedUrls.push(data.url);
+    }
+
+    setImages((prev) => [...prev, ...uploadedUrls]);
+    setUploading(false);
   };
 
   const submit = async () => {
+    if (!title || !price) {
+      alert('Title and Price are required');
+      return;
+    }
+
     await addDoc(collection(db, 'products'), {
       title,
-      price: { amount: Number(price), currency: 'EUR' },
+      price: { amount: Number(price), currency: '₺' },
       images,
-      category: 'general',
+      category: 'candle',
       stock: 10,
       draft: false,
       createdAt: serverTimestamp(),
@@ -39,24 +58,42 @@ export default function NewProductPage() {
   return (
     <ProtectedRoute role='Admin'>
       <div className='p-6 space-y-4 max-w-md'>
-        <Input placeholder='Title' onChange={(e) => setTitle(e.target.value)} />
+        <h1 className='text-2xl font-semibold'>Add New Product</h1>
+
+        <Input
+          placeholder='Title'
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
+        />
+
         <Input
           type='number'
           placeholder='Price'
           onChange={(e) => setPrice(e.target.value)}
+          value={price}
         />
         <Input
           type='file'
-          onChange={(e) => e.target.files && uploadImage(e.target.files[0])}
+          multiple
+          accept='image/*'
+          onChange={(e) => e.target.files && uploadImages(e.target.files)}
         />
+        {uploading && <p className='text-sm'>Uploading images...</p>}
 
         <div className='flex gap-2'>
           {images.map((img) => (
-            <img key={img} src={img} className='w-20 h-20 rounded' />
+            <img
+              key={img}
+              src={img}
+              alt='product'
+              className='w-20 h-20 object-cover rounded border'
+            />
           ))}
         </div>
 
-        <Button onClick={submit}>Create</Button>
+        <Button onClick={submit} disabled={uploading}>
+          Create Product
+        </Button>
       </div>
     </ProtectedRoute>
   );

@@ -34,11 +34,55 @@ export default function AdminProductsPage() {
     fetchProducts();
   }, []);
 
+  const uploadImage = async (file: File, index: number) => {
+    const fd = new FormData();
+    fd.append('file', file);
+
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      body: fd,
+    });
+
+    const data = await res.json();
+    setProducts((prev) =>
+      prev.map((p, i) =>
+        i === index ? { ...p, images: [...(p.images || []), data.url] } : p,
+      ),
+    );
+
+    await updateDoc(doc(db, 'products', products[index].id!), {
+      images: [...(products[index].images || []), data.url],
+      updatedAt: new Date(),
+    });
+  };
+
+  const removeImage = async (productIndex: number, imageUrl: string) => {
+    const product = products[productIndex];
+
+    await fetch('/api/delete-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ urls: [imageUrl] }),
+    });
+
+    const updatedImages = product.images.filter((img) => img !== imageUrl);
+
+    setProducts((prev) =>
+      prev.map((p, i) =>
+        i === productIndex ? { ...p, images: updatedImages } : p,
+      ),
+    );
+
+    await updateDoc(doc(db, 'products', product.id!), {
+      images: updatedImages,
+      updatedAt: new Date(),
+    });
+  };
+
   const handleDelete = async (product: Product) => {
     if (!product.id) return;
 
-    const ok = confirm('Are you sure you want to delete this product?');
-    if (!ok) return;
+    if (!confirm('Delete product?')) return;
 
     if (product.images?.length) {
       await fetch('/api/delete-image', {
@@ -93,13 +137,31 @@ export default function AdminProductsPage() {
               </CardHeader>
 
               <CardContent className='space-y-3'>
-                {product.images?.[0] && (
-                  <img
-                    src={product.images[0]}
-                    alt={product.title}
-                    className='w-full h-40 object-cover rounded'
-                  />
-                )}
+                <div className='flex flex-wrap gap-2'>
+                  {product.images?.map((img) => (
+                    <div key={img} className='relative'>
+                      <img
+                        src={img}
+                        className='w-20 h-20 object-cover rounded'
+                      />
+                      <button
+                        onClick={() => removeImage(index, img)}
+                        className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5'
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <Input
+                  type='file'
+                  multiple
+                  onChange={(e) => {
+                    if (!e.target.files) return;
+                    Array.from(e.target.files).forEach(uploadImage);
+                  }}
+                />
 
                 <Input
                   type='number'
@@ -152,3 +214,4 @@ export default function AdminProductsPage() {
     </ProtectedRoute>
   );
 }
+// ₺
