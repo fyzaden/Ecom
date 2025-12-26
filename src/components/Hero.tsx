@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 const images = [
   '/hero/Wildberry-smoothie-candle.jpg',
   '/hero/Sunflower-candle.jpg',
-  '/hero/Strawberry-latte candle.jpg',
+  '/hero/Strawberry-latte-candle.jpg',
   // '/hero/Pink days Eye candle.jpg',
   // '/hero/orange cinnamon candle.jpg',
   // '/hero/orange candle.jpg',

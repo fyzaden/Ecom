@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Ecom',
@@ -14,11 +15,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning>
       <body>
         <AuthProvider>
-          <Navbar />
-          <main className='min-h-screen'>{children}</main>
+          <ThemeProvider>
+            <Navbar />
+            <main className='min-h-screen'>{children}</main>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
