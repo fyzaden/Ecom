@@ -1,14 +1,13 @@
+'use client';
+
 import Hero from '@/components/Hero';
-import ProductGridServer from '@/components/ProductGridServer';
-import { Suspense } from 'react';
+import ProductGrid from '@/components/ProductGrid';
 
 export default function Home() {
   return (
     <div>
       <Hero />
-      <Suspense fallback={null}>
-        <ProductGridServer />
-      </Suspense>
+      <ProductGrid />
     </div>
   );
 }
