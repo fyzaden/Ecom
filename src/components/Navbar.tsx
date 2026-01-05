@@ -6,6 +6,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -34,7 +35,7 @@ export default function Navbar() {
   const searchParams = useSearchParams();
 
   const [query, setQuery] = useState('');
-
+  const { items } = useCart();
   useEffect(() => {
     setQuery(searchParams.get('q') || '');
   }, [searchParams]);
@@ -74,24 +75,26 @@ export default function Navbar() {
         </div>
 
         <nav className='hidden md:flex gap-6 text-sm'>
+          <Link href='/admin' className='hover:text-primary'>
+            Dashboard
+          </Link>
           <Link href='/' className='hover:text-primary transition'>
             Shop
           </Link>
-          <Link href='/' className='hover:text-primary transition'>
-            Collections
-          </Link>
+
           <Link href='/' className='hover:text-primary transition'>
             About
           </Link>
 
           {user?.role === 'Admin' && (
-            <Link
-              href='/admin'
-              className='flex items-center gap-1 font-medium text-primary'
-            >
-              <LayoutGrid className='h-4 w-4' />
-              Admin
-            </Link>
+            <>
+              <Link href='/admin/products' className='hover:text-primary'>
+                Products
+              </Link>
+              <Link href='/admin/products/new' className='hover:text-primary'>
+                Add Product
+              </Link>
+            </>
           )}
         </nav>
 
@@ -118,8 +121,9 @@ export default function Navbar() {
 
           <Link href='/cart' className='relative'>
             <ShoppingCart className='h-5 w-5' />
+
             <span className='absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground'>
-              0
+              {items.reduce((sum, i) => sum + i.quantity, 0)}
             </span>
           </Link>
 

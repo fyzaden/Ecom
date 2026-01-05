@@ -5,6 +5,9 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Product } from '@/types/product';
 import { useSearchParams } from 'next/navigation';
+import { Heart, ShoppingCart } from 'lucide-react';
+import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 export default function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -13,6 +16,7 @@ export default function ProductGrid() {
 
   const searchParams = useSearchParams();
   const search = searchParams.get('q')?.toLowerCase() || '';
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,45 +47,67 @@ export default function ProductGrid() {
         {search ? `Results for "${search}"` : 'Featured Products'}
       </h2>
 
-      {filteredProducts.length === 0 && (
-        <p className='text-muted-foreground'>No products found.</p>
-      )}
-
       <div className='grid gap-6 sm:grid-cols-2 md:grid-cols-4'>
         {filteredProducts.map((product) => {
           const mainImage = product.images?.[0];
           const hoverImage = product.images?.[1];
 
           return (
-            <Card
-              key={product.id}
-              className='group overflow-hidden'
-              onMouseEnter={() => setHovered(product.id!)}
-              onMouseLeave={() => setHovered(null)}
-            >
-              <CardContent className='p-4 space-y-3'>
-                <div className='relative h-44 w-full overflow-hidden rounded-md bg-neutral-100'>
-                  {mainImage && (
-                    <img
-                      src={
-                        hovered === product.id && hoverImage
-                          ? hoverImage
-                          : mainImage
-                      }
-                      alt={product.title}
-                      className='h-full w-full object-cover transition-all duration-300'
-                    />
-                  )}
-                </div>
+            <div key={product.id}>
+              <Card
+                className='group overflow-hidden cursor-pointer'
+                onMouseEnter={() => setHovered(product.id!)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                <CardContent className='p-4 space-y-3'>
+                  <Link href={`/product/${product.id}`}>
+                    <div className='relative aspect-square w-full overflow-hidden rounded-md bg-neutral-100'>
+                      {mainImage && (
+                        <img
+                          src={
+                            hovered === product.id && hoverImage
+                              ? hoverImage
+                              : mainImage
+                          }
+                          alt={product.title}
+                          className='h-full w-full object-cover transition-transform duration-300 group-hover:scale-105'
+                        />
+                      )}
+                    </div>
+                  </Link>{' '}
+                  <div className='flex justify-between opacity-0 group-hover:opacity-100 transition'>
+                    <button className='rounded-full bg-white p-2 shadow'>
+                      <Heart className='h-4 w-4' />
+                    </button>
 
-                <div>
-                  <h3 className='font-medium truncate'>{product.title}</h3>
-                  <p className='text-sm text-muted-foreground'>
-                    {product.price.amount} {product.price.currency}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                    <button
+                      onClick={() =>
+                        addToCart({
+                          id: product.id,
+                          title: product.title,
+                          price: product.price,
+                          image: product.images?.[0],
+                          quantity: 1,
+                        })
+                      }
+                      className='flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium shadow'
+                    >
+                      <ShoppingCart className='h-4 w-4' />
+                      Add
+                    </button>
+                  </div>{' '}
+                  <div className='space-y-1'>
+                    <h3 className='font-medium line-clamp-1'>
+                      {product.title}
+                    </h3>
+
+                    <p className='font-semibold'>
+                      {product.price.amount} {product.price.currency}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           );
         })}
       </div>
