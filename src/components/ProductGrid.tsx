@@ -85,7 +85,7 @@ export default function ProductGrid() {
                         addToCart({
                           id: product.id,
                           title: product.title,
-                          price: product.price,
+                          price: product.price.amount,
                           image: product.images?.[0],
                           quantity: 1,
                         })

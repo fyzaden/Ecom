@@ -15,14 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import {
-  ShoppingCart,
-  User,
-  Sun,
-  Moon,
-  Laptop,
-  LayoutGrid,
-} from 'lucide-react';
+import { ShoppingCart, User, Sun, Moon, Laptop } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -36,9 +29,12 @@ export default function Navbar() {
 
   const [query, setQuery] = useState('');
   const { items } = useCart();
+
   useEffect(() => {
     setQuery(searchParams.get('q') || '');
   }, [searchParams]);
+
+  const totalItems = items.reduce((total, item) => total + item.quantity, 0);
 
   const handleSearch = (value: string) => {
     setQuery(value);
@@ -122,9 +118,11 @@ export default function Navbar() {
           <Link href='/cart' className='relative'>
             <ShoppingCart className='h-5 w-5' />
 
-            <span className='absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground'>
-              {items.reduce((sum, i) => sum + i.quantity, 0)}
-            </span>
+            {totalItems > 0 && (
+              <span className='absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground'>
+                {totalItems}
+              </span>
+            )}
           </Link>
 
           {!loading && !user && (

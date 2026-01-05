@@ -1,42 +1,54 @@
 'use client';
 
-import { useCart } from '@/context/CartContext';
+import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { Product } from '@/types/product';
+import { useCart } from '@/context/CartContext';
+import { Button } from '@/components/ui/button';
 
-type Props = {
-  params: { id: string };
-};
-
-export default async function ProductDetailPage({ params }: Props) {
-  const ref = doc(db, 'products', params.id);
-  const snap = await getDoc(ref);
+export default function ProductDetail({ params }: { params: { id: string } }) {
+  const [product, setProduct] = useState<Product | null>(null);
   const { addToCart } = useCart();
 
-  if (!snap.exists()) {
-    return <div className='p-10'>Product not found</div>;
-  }
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const ref = doc(db, 'products', params.id);
+      const snap = await getDoc(ref);
 
-  const product = snap.data();
+      if (snap.exists()) {
+        setProduct({
+          id: snap.id,
+          ...(snap.data() as Omit<Product, 'id'>),
+        });
+      }
+    };
+
+    fetchProduct();
+  }, [params.id]);
+
+  if (!product) return <p className='p-6'>Loading...</p>;
 
   return (
-    <div className='mx-auto max-w-4xl p-10 grid md:grid-cols-2 gap-10'>
+    <section className='mx-auto max-w-5xl px-6 py-16 grid md:grid-cols-2 gap-10'>
       <img
         src={product.images?.[0]}
-        className='rounded-lg'
         alt={product.title}
+        className='rounded-lg'
       />
 
-      <div>
+      <div className='space-y-4'>
         <h1 className='text-2xl font-semibold'>{product.title}</h1>
-        <p className='mt-2 text-muted-foreground'>
+        <p className='text-muted-foreground'>{product.description}</p>
+
+        <p className='text-xl font-bold'>
           {product.price.amount} {product.price.currency}
         </p>
-        <button
-          className='mt-6 px-6 py-2 bg-primary text-white rounded'
+
+        <Button
           onClick={() =>
             addToCart({
-              id: params.id,
+              id: product.id,
               title: product.title,
               price: product.price.amount,
               image: product.images?.[0],
@@ -45,8 +57,8 @@ export default async function ProductDetailPage({ params }: Props) {
           }
         >
           Add to Cart
-        </button>
+        </Button>
       </div>
-    </div>
+    </section>
   );
 }
