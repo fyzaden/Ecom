@@ -8,8 +8,10 @@ export interface Product {
     amount: number;
     currency: string;
   };
+  stripeProductId?: string;
+  stripePriceId?: string;
   taxRate: number;
-  images: string[];
+  images?: string[];
   category: string;
   stock: number;
   draft: boolean;

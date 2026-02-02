@@ -2,21 +2,18 @@
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useState } from 'react';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 export default function NewProductPage() {
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [images, setImages] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const uploadImages = async (files: FileList) => {
-    setUploading(true);
-
-    const uploadedUrls: string[] = [];
+    const uploaded: string[] = [];
 
     for (const file of Array.from(files)) {
       const fd = new FormData();
@@ -28,35 +25,39 @@ export default function NewProductPage() {
       });
 
       const data = await res.json();
-      uploadedUrls.push(data.url);
+      uploaded.push(data.url);
     }
 
-    setImages((prev) => [...prev, ...uploadedUrls]);
-    setUploading(false);
+    setImages((prev) => [...prev, ...uploaded]);
   };
 
   const submit = async () => {
     if (!title || !price) {
-      alert('Title and Price are required');
+      alert('Title and price required');
       return;
     }
 
-    await addDoc(collection(db, 'products'), {
-      title,
-      price: { amount: Number(price), currency: '₺' },
-      images,
-      category: 'candle',
-      stock: 10,
-      draft: false,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+    setLoading(true);
+
+    await fetch('/api/admin/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        description,
+        price: Number(price),
+        images,
+      }),
     });
 
+    setLoading(false);
+
     setTitle('');
+    setDescription('');
     setPrice('');
     setImages([]);
 
-    alert('Product created');
+    alert('Product created with Stripe');
   };
 
   return (
@@ -71,6 +72,12 @@ export default function NewProductPage() {
         />
 
         <Input
+          placeholder='Description'
+          onChange={(e) => setDescription(e.target.value)}
+          value={description}
+        />
+
+        <Input
           type='number'
           placeholder='Price'
           onChange={(e) => setPrice(e.target.value)}
@@ -82,7 +89,6 @@ export default function NewProductPage() {
           accept='image/*'
           onChange={(e) => e.target.files && uploadImages(e.target.files)}
         />
-        {uploading && <p className='text-sm'>Uploading images...</p>}
 
         <div className='flex gap-2'>
           {images.map((img) => (
@@ -95,7 +101,7 @@ export default function NewProductPage() {
           ))}
         </div>
 
-        <Button onClick={submit} disabled={uploading}>
+        <Button onClick={submit} disabled={loading}>
           Create Product
         </Button>
       </div>

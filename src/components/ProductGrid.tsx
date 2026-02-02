@@ -60,7 +60,7 @@ export default function ProductGrid() {
                 onMouseLeave={() => setHovered(null)}
               >
                 <CardContent className='p-4 space-y-3'>
-                  <Link href={`/product/${product.id}`}>
+                  <Link href={`/products/${product.id}`}>
                     <div className='relative aspect-square w-full overflow-hidden rounded-md bg-neutral-100'>
                       {mainImage && (
                         <img
