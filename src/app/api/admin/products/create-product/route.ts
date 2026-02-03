@@ -35,7 +35,6 @@ export async function POST(req: Request) {
         amount: Number(price),
         currency: '$',
       },
-      category: 'candle',
       stock: 10,
       draft: false,
       stripeProductId: stripeProduct.id,

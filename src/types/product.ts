@@ -12,7 +12,6 @@ export interface Product {
   stripePriceId?: string;
   taxRate: number;
   images?: string[];
-  category: string;
   stock: number;
   draft: boolean;
   discount?: {

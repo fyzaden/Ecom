@@ -25,10 +25,6 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
-    console.log(
-      "Stripe'a giden veri:",
-      items.map((i) => i.stripePriceId),
-    );
 
     try {
       const res = await fetch('/api/checkout', {
@@ -53,7 +49,6 @@ export default function CartPage() {
       alert('Checkout error');
     }
   };
-  console.log(items);
 
   if (items.length === 0) {
     return (

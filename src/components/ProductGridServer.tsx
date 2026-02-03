@@ -13,7 +13,7 @@ export default async function ProductGridServer() {
       id: doc.id,
       title: data.title,
       images: data.images ?? [],
-      category: data.category,
+      description: data.description,
       draft: data.draft,
       stock: data.stock,
       price: {
