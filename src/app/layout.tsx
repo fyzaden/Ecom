@@ -4,6 +4,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
 import Navbar from '@/components/Navbar';
 import { ThemeProvider } from '@/components/theme-provider';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Ecom',
@@ -26,6 +27,7 @@ export default function RootLayout({
             </ThemeProvider>
           </CartProvider>
         </AuthProvider>
+        <Footer />
       </body>
     </html>
   );

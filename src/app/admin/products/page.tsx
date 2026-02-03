@@ -65,7 +65,9 @@ export default function AdminProductsPage() {
       body: JSON.stringify({ urls: [imageUrl] }),
     });
 
-    const updatedImages = product.images.filter((img) => img !== imageUrl);
+    const updatedImages = (product.images ?? []).filter(
+      (img) => img !== imageUrl,
+    );
 
     setProducts((prev) =>
       prev.map((p, i) =>
@@ -102,7 +104,7 @@ export default function AdminProductsPage() {
 
     await updateDoc(doc(db, 'products', product.id), {
       title: product.title,
-      category: product.category,
+      description: product.description,
       price: product.price,
       updatedAt: new Date(),
     });
@@ -181,18 +183,6 @@ export default function AdminProductsPage() {
                   }}
                 />
 
-                <Input
-                  value={product.category}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setProducts((prev) =>
-                      prev.map((p, i) =>
-                        i === index ? { ...p, category: value } : p,
-                      ),
-                    );
-                  }}
-                />
-
                 <div className='flex gap-2'>
                   <Button size='sm' onClick={() => handleUpdate(product)}>
                     Update
@@ -214,4 +204,3 @@ export default function AdminProductsPage() {
     </ProtectedRoute>
   );
 }
-// ₺
