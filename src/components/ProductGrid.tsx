@@ -84,9 +84,11 @@ export default function ProductGrid() {
                       onClick={() =>
                         addToCart({
                           id: product.id,
+                          productId: product.id,
                           title: product.title,
                           price: product.price.amount,
                           image: product.images?.[0],
+                          stripePriceId: product.stripePriceId || '',
                           quantity: 1,
                         })
                       }

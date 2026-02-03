@@ -2,19 +2,66 @@
 
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 export default function CartPage() {
   const { items, increase, decrease, remove } = useCart();
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return <div className='min-h-screen bg-white' />;
+  }
   const totalPrice = items.reduce(
     (total, item) => total + item.price * item.quantity,
     0,
   );
 
+  const handleCheckout = async () => {
+    if (items.length === 0) return;
+    console.log(
+      "Stripe'a giden veri:",
+      items.map((i) => i.stripePriceId),
+    );
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            priceId: item.stripePriceId,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Checkout failed');
+      }
+
+      const data = await res.json();
+      router.push(data.url);
+    } catch (err) {
+      console.error(err);
+      alert('Checkout error');
+    }
+  };
+  console.log(items);
+
   if (items.length === 0) {
     return (
       <div className='max-w-4xl mx-auto px-6 py-20 text-center'>
         <h2 className='text-xl font-semibold'>Your cart is empty 🛒</h2>
+        <Button className='mt-6' onClick={() => router.push('/')}>
+          Continue Shopping
+        </Button>
       </div>
     );
   }
@@ -78,12 +125,18 @@ export default function CartPage() {
       <div className='mt-10 flex items-center justify-between border-t pt-6'>
         <p className='text-lg font-semibold'>Total</p>
         <p className='text-xl font-bold'>
-          {totalPrice.toLocaleString('tr-TR')} ₺
+          {totalPrice.toLocaleString('en-EN')} $
         </p>
       </div>
 
-      <div className='mt-6 text-right'>
-        <Button size='lg'>Checkout</Button>
+      <div className='mt-8 flex justify-end'>
+        <Button
+          size='lg'
+          onClick={handleCheckout}
+          className='px-12 py-6 text-lg rounded-full shadow-xl transition-all hover:scale-105 active:scale-95'
+        >
+          Checkout
+        </Button>
       </div>
     </section>
   );

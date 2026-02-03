@@ -6,7 +6,10 @@ import { createContext, useContext, useState, useEffect } from 'react';
 type CartItem = Product & {
   id: string;
   title: string;
-  price: number;
+  price: {
+    amount: number;
+    currency: string;
+  } & number;
   image?: string;
   quantity: number;
   stripeProductId: string;
@@ -73,6 +76,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => {
     setItems([]);
+    localStorage.removeItem('cart-storage');
   };
 
   return (

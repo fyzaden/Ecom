@@ -14,7 +14,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
       price: product.price.amount,
       image: product.images?.[0],
       quantity: 1,
-      stripePriceId: product.stripePriceId, // Stripe için gerekli
+      stripePriceId: product.stripePriceId || '',
     });
   };
 

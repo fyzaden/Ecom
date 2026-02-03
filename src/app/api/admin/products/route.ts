@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const stripePrice = await stripe.prices.create({
     product: stripeProduct.id,
     unit_amount: body.price * 100,
-    currency: 'try',
+    currency: 'usd',
   });
 
   await addDoc(collection(db, 'products'), {
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     description: body.description,
     price: {
       amount: body.price,
-      currency: '₺',
+      currency: '$',
     },
     images: body.images || [],
     stripeProductId: stripeProduct.id,

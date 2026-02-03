@@ -15,28 +15,25 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1️⃣ Stripe Product
     const stripeProduct = await stripe.products.create({
       name: title,
-      description,
-      images,
+      description: description,
+      images: images || [],
     });
 
-    // 2️⃣ Stripe Price
     const stripePrice = await stripe.prices.create({
       product: stripeProduct.id,
       unit_amount: Math.round(Number(price) * 100),
-      currency: 'try',
+      currency: 'usd',
     });
 
-    // 3️⃣ Firestore
-    await addDoc(collection(db, 'products'), {
+    const docRef = await addDoc(collection(db, 'products'), {
       title,
       description,
-      images,
+      images: images || [],
       price: {
         amount: Number(price),
-        currency: '₺',
+        currency: '$',
       },
       category: 'candle',
       stock: 10,
@@ -47,11 +44,11 @@ export async function POST(req: Request) {
       updatedAt: serverTimestamp(),
     });
 
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error(err);
+    return NextResponse.json({ success: true, id: docRef.id });
+  } catch (err: any) {
+    console.error('Stripe/Firebase Error:', err.message);
     return NextResponse.json(
-      { error: 'Something went wrong' },
+      { error: err.message || 'Internal Server Error' },
       { status: 500 },
     );
   }

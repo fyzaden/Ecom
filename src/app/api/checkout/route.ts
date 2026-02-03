@@ -4,8 +4,8 @@ import { stripe } from '@/lib/stripe';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
     const { items } = body;
+    console.log('Gelen Sepet Ürünleri:', items);
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
@@ -23,8 +23,9 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (err) {
-    console.error(err);
+  } catch (error: any) {
+    console.error('STRIKE HATA DETAYI:', error.message);
+
     return NextResponse.json({ error: 'Checkout failed' }, { status: 500 });
   }
 }
