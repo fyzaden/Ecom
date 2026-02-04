@@ -32,6 +32,7 @@ export default function CartPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: items.map((item) => ({
+            id: item.id,
             priceId: item.stripePriceId,
             quantity: item.quantity,
           })),
@@ -81,7 +82,7 @@ export default function CartPage() {
 
               <div>
                 <h3 className='font-medium'>{item.title}</h3>
-                <p className='text-sm text-muted-foreground'>{item.price} ₺</p>
+                <p className='text-sm text-muted-foreground'>{item.price} $</p>
               </div>
             </div>
 
