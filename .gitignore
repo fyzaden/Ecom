@@ -41,4 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 
-serviceAccountKey.json
+ecom-webhook-server/serviceAccountKey.json
