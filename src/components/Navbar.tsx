@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,11 +15,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ShoppingCart, User, Sun, Moon, Laptop } from 'lucide-react';
+import { ShoppingCart, User, Sun, Moon, Laptop, Search } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useSearchParams } from 'next/navigation';
 
 export default function Navbar() {
   const { user, loading } = useAuth();
@@ -49,108 +47,179 @@ export default function Navbar() {
   };
 
   return (
-    <header className='sticky top-0 z-50 border-b bg-background/80 backdrop-blur'>
-      <div className='mx-auto flex h-16 max-w-7xl items-center justify-between px-6'>
+    <header className='sticky top-0 z-50 w-full border-b border-white/10 bg-background/60 backdrop-blur-xl transition-all duration-300'>
+      <div className='mx-auto flex h-20 max-w-7xl items-center justify-between px-6'>
         <Link
           href='/'
-          className='flex items-center gap-2 font-semibold text-lg'
+          className='flex items-center gap-2 text-2xl font-bold tracking-tighter transition-transform hover:scale-105'
         >
-          <span className='rounded-md bg-primary px-2 py-1 text-primary-foreground'>
-            E
-          </span>
-          Ecom
+          <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20'>
+            <span className='text-primary-foreground'>E</span>
+          </div>
+          <span className='hidden sm:block uppercase'>Ecom</span>
         </Link>
-        <div className='hidden md:flex items-center relative'>
-          <Search className='absolute left-3 h-4 w-4 text-muted-foreground' />
-          <Input
-            value={query}
-            onChange={(e) => handleSearch(e.target.value)}
-            placeholder='Search products...'
-            className='pl-9 w-56'
-          />
+
+        <div className='hidden flex-1 items-center justify-center px-8 md:flex'>
+          <div className='relative w-full max-w-md group'>
+            <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary' />
+            <Input
+              value={query}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder='Search products...'
+              className='h-10 w-full rounded-full border-none bg-secondary/50 pl-10 pr-4 text-sm transition-all focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/50'
+            />
+          </div>
         </div>
 
-        <nav className='hidden md:flex gap-6 text-sm'>
-          <Link href='/admin' className='hover:text-primary'>
-            Dashboard
-          </Link>
-          <Link href='/' className='hover:text-primary transition'>
-            Shop
-          </Link>
-
-          <Link href='/' className='hover:text-primary transition'>
-            About
-          </Link>
-
-          {user?.role === 'Admin' && (
-            <>
-              <Link href='/admin/products' className='hover:text-primary'>
-                Products
+        <div className='flex items-center gap-2 sm:gap-4'>
+          <nav className='hidden items-center gap-1 md:flex mr-4'>
+            {['Shop', 'About'].map((item) => (
+              <Link
+                key={item}
+                href={item === 'Shop' ? '/' : `/${item.toLowerCase()}`}
+                className='relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground group'
+              >
+                {item}
+                <span className='absolute inset-x-3 bottom-1.5 h-0.5 scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100' />
               </Link>
-              <Link href='/admin/products/new' className='hover:text-primary'>
-                Add Product
-              </Link>
-            </>
-          )}
-        </nav>
+            ))}
 
-        <div className='flex items-center gap-3'>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='ghost' size='icon'>
-                <Sun className='h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
-                <Moon className='absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuItem onClick={() => setTheme('light')}>
-                <Sun className='mr-2 h-4 w-4' /> Light
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('dark')}>
-                <Moon className='mr-2 h-4 w-4' /> Dark
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('system')}>
-                <Laptop className='mr-2 h-4 w-4' /> System
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Link href='/cart' className='relative'>
-            <ShoppingCart className='h-5 w-5' />
-
-            {totalItems > 0 && (
-              <span className='absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground'>
-                {totalItems}
-              </span>
+            {user?.role === 'Admin' && (
+              <div className='flex items-center gap-1 border-l ml-2 pl-2'>
+                <Link
+                  href='/admin/products'
+                  className='px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary'
+                >
+                  Envanter
+                </Link>
+              </div>
             )}
-          </Link>
+            {user?.role === 'Admin' && (
+              <div className='flex items-center gap-1 border-l ml-2 pl-2'>
+                <Link
+                  href='/admin/products/new'
+                  className='px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary'
+                >
+                  Add Product
+                </Link>
+              </div>
+            )}
+          </nav>
 
-          {!loading && !user && (
-            <div className='flex gap-2'>
-              <Button variant='ghost' onClick={() => router.push('/login')}>
-                Login
-              </Button>
-              <Button onClick={() => router.push('/signup')}>Sign up</Button>
-            </div>
-          )}
-
-          {!loading && user && (
+          <div className='flex items-center gap-1 sm:gap-2'>
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Avatar className='cursor-pointer'>
-                  <AvatarFallback>
-                    <User className='h-4 w-4' />
-                  </AvatarFallback>
-                </Avatar>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='rounded-full hover:bg-secondary'
+                >
+                  <Sun className='h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
+                  <Moon className='absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
-                <DropdownMenuItem disabled>{user.email}</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
+              <DropdownMenuContent align='end' className='rounded-2xl'>
+                <DropdownMenuItem onClick={() => setTheme('light')}>
+                  Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                  Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('system')}>
+                  System
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
+
+            <Link href='/cart' className='relative'>
+              <ShoppingCart className='h-5 w-5' />
+
+              {totalItems > 0 && (
+                <span className='absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground'>
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+
+            {!loading && !user && (
+              <div className='flex gap-2'>
+                <Button variant='ghost' onClick={() => router.push('/login')}>
+                  Login
+                </Button>
+                <Button onClick={() => router.push('/signup')}>Sign up</Button>
+              </div>
+            )}
+
+            {!loading &&
+              (user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger className='ml-2 outline-none transition-opacity hover:opacity-80'>
+                    <Avatar className='h-9 w-9 border-2 border-primary/10 shadow-sm'>
+                      <AvatarFallback className='bg-primary/5 text-primary'>
+                        <User className='h-5 w-5' />
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+
+                  <DropdownMenuContent
+                    align='end'
+                    className='mt-2 w-56 rounded-2xl p-2'
+                  >
+                    <div className='flex items-center justify-start gap-2 p-2 border-b mb-1'>
+                      <div className='flex flex-col space-y-0.5 leading-none'>
+                        <p className='text-sm font-semibold capitalize'>
+                          {user.email?.split('@')[0]}
+                        </p>
+                        <p className='truncate text-xs text-muted-foreground'>
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Menu Items */}
+                    <DropdownMenuItem
+                      onClick={() => router.push('/profile')}
+                      className='cursor-pointer'
+                    >
+                      My Account
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => router.push('/orders')}
+                      className='cursor-pointer'
+                    >
+                      Orders
+                    </DropdownMenuItem>
+
+                    {/* Logout Action */}
+                    <DropdownMenuItem
+                      className='text-red-500 focus:bg-red-50 focus:text-red-500 font-medium cursor-pointer'
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                /* Guest Navigation */
+                <div className='flex items-center gap-2 pl-2'>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    className='rounded-full hover:bg-secondary transition-colors'
+                    onClick={() => router.push('/login')}
+                  >
+                    Log In
+                  </Button>
+                  <Button
+                    size='sm'
+                    className='rounded-full px-5 shadow-md shadow-primary/10 transition-transform active:scale-95'
+                    onClick={() => router.push('/signup')}
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </header>
