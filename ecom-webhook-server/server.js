@@ -16,6 +16,7 @@ app.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
   async (req, res) => {
+    console.log('🔔 Webhook tetiklendi! Bir olay geldi...');
     const sig = req.headers['stripe-signature'];
     let event;
 
