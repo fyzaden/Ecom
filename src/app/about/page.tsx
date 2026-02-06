@@ -16,7 +16,7 @@ export default function AboutPage() {
         <p className='text-lg text-neutral-500 leading-relaxed font-light'>
           At{' '}
           <span className='font-bold text-black uppercase tracking-widest'>
-            Ecom Studio
+            Candle Dream
           </span>
           , we believe that a candle is more than just a light source; it is an
           invitation to pause, breathe, and find peace in the present moment.

@@ -54,9 +54,11 @@ export default function Navbar() {
           className='flex items-center gap-2 text-2xl font-bold tracking-tighter transition-transform hover:scale-105'
         >
           <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20'>
-            <span className='text-primary-foreground'>E</span>
+            <span className='text-primary-foreground'>C</span>
           </div>
-          <span className='hidden sm:block uppercase'>Ecom</span>
+          <h3 className='text-2xl font-bold tracking-tighter text-neutral-900'>
+            Candle<span className='text-neutral-400 font-light'>Dream</span>
+          </h3>
         </Link>
 
         <div className='hidden flex-1 items-center justify-center px-8 md:flex'>
@@ -85,17 +87,13 @@ export default function Navbar() {
             ))}
 
             {user?.role === 'Admin' && (
-              <div className='flex items-center gap-1 border-l ml-2 pl-2'>
+              <div className='flex items-center gap-1 border-l ml-2 pl-2 border-muted-foreground/20'>
                 <Link
                   href='/admin/products'
                   className='px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary'
                 >
-                  Envanter
+                  Inventory
                 </Link>
-              </div>
-            )}
-            {user?.role === 'Admin' && (
-              <div className='flex items-center gap-1 border-l ml-2 pl-2'>
                 <Link
                   href='/admin/products/new'
                   className='px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary'
@@ -106,7 +104,7 @@ export default function Navbar() {
             )}
           </nav>
 
-          <div className='flex items-center gap-1 sm:gap-2'>
+          <div className='flex items-center gap-1 sm:gap-3'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -131,24 +129,17 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link href='/cart' className='relative'>
+            <Link
+              href='/cart'
+              className='relative p-2 hover:bg-secondary rounded-full transition-colors'
+            >
               <ShoppingCart className='h-5 w-5' />
-
               {totalItems > 0 && (
-                <span className='absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground'>
+                <span className='absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground animate-in zoom-in'>
                   {totalItems}
                 </span>
               )}
             </Link>
-
-            {!loading && !user && (
-              <div className='flex gap-2'>
-                <Button variant='ghost' onClick={() => router.push('/login')}>
-                  Login
-                </Button>
-                <Button onClick={() => router.push('/signup')}>Sign up</Button>
-              </div>
-            )}
 
             {!loading &&
               (user ? (
@@ -166,7 +157,7 @@ export default function Navbar() {
                     className='mt-2 w-56 rounded-2xl p-2'
                   >
                     <div className='flex items-center justify-start gap-2 p-2 border-b mb-1'>
-                      <div className='flex flex-col space-y-0.5 leading-none'>
+                      <div className='flex flex-col space-y-0.5 leading-none text-left'>
                         <p className='text-sm font-semibold capitalize'>
                           {user.email?.split('@')[0]}
                         </p>
@@ -175,8 +166,6 @@ export default function Navbar() {
                         </p>
                       </div>
                     </div>
-
-                    {/* Menu Items */}
                     <DropdownMenuItem
                       onClick={() => router.push('/profile')}
                       className='cursor-pointer'
@@ -189,8 +178,6 @@ export default function Navbar() {
                     >
                       Orders
                     </DropdownMenuItem>
-
-                    {/* Logout Action */}
                     <DropdownMenuItem
                       className='text-red-500 focus:bg-red-50 focus:text-red-500 font-medium cursor-pointer'
                       onClick={handleLogout}
@@ -200,19 +187,18 @@ export default function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                /* Guest Navigation */
                 <div className='flex items-center gap-2 pl-2'>
                   <Button
                     variant='ghost'
                     size='sm'
-                    className='rounded-full hover:bg-secondary transition-colors'
+                    className='rounded-full hover:bg-secondary'
                     onClick={() => router.push('/login')}
                   >
                     Log In
                   </Button>
                   <Button
                     size='sm'
-                    className='rounded-full px-5 shadow-md shadow-primary/10 transition-transform active:scale-95'
+                    className='rounded-full px-5 shadow-lg shadow-primary/10'
                     onClick={() => router.push('/signup')}
                   >
                     Sign Up

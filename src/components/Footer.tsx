@@ -15,7 +15,7 @@ export default function Footer() {
         <div className='grid grid-cols-1 md:grid-cols-4 gap-12'>
           <div className='space-y-6'>
             <h3 className='text-2xl font-bold tracking-tighter text-neutral-900'>
-              E<span className='text-neutral-400 font-light'>COM</span>
+              Candle<span className='text-neutral-400 font-light'>Dream</span>
             </h3>
             <p className='text-sm text-neutral-500 leading-relaxed italic'>
               "Handcrafted premium candles designed to bring warmth and peace to
@@ -84,11 +84,11 @@ export default function Footer() {
             <ul className='space-y-4 text-sm text-neutral-600'>
               <li className='flex items-center gap-3'>
                 <Mail className='h-4 w-4 text-neutral-400' />
-                <span>hello@ecomstudio.com</span>
+                <span>hello@candledream.com</span>
               </li>
               <li className='flex items-center gap-3'>
                 <MapPin className='h-4 w-4 text-neutral-400' />
-                <span>Istanbul, Turkiye</span>
+                <span>Konya, Turkiye</span>
               </li>
               <li className='flex items-center gap-3'>
                 <Phone className='h-4 w-4 text-neutral-400' />
@@ -119,7 +119,7 @@ export default function Footer() {
 
         <div className='mt-20 pt-8 border-t border-neutral-100 flex flex-col md:flex-row justify-between items-center gap-6'>
           <p className='text-[10px] uppercase tracking-widest text-neutral-400'>
-            © {new Date().getFullYear()} Ecom Studio. Handcrafted in Turkiye.
+            © {new Date().getFullYear()} Candle Dream Handcrafted in Turkiye.
           </p>
           <div className='flex gap-8 text-[10px] uppercase tracking-widest text-neutral-400 font-medium'>
             <Link href='#' className='hover:text-black transition-colors'>
