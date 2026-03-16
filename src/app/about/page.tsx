@@ -1,9 +1,18 @@
 'use client';
 
-import React from 'react';
 import { Heart, ShieldCheck, Leaf } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 export default function AboutPage() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
   return (
     <main className='bg-white text-neutral-900'>
       <section className='mx-auto max-w-3xl px-6 py-24 text-center'>

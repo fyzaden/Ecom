@@ -4,12 +4,12 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   typescript: {
-    ignoreBuildErrors: true, // Tüm TypeScript hatalarını görmezden gel
+    ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: true, // Tüm Lint uyarılarını görmezden gel
+    ignoreDuringBuilds: true,
   },
-  // Hatalı sayfaların build'i durdurmasını engellemek için
+
   trailingSlash: true,
   images: { unoptimized: true },
 };
