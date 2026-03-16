@@ -26,7 +26,7 @@ export default function RootLayout({
               <Suspense fallback={null}>
                 <Navbar />
               </Suspense>
-              <Footer />
+
               <main className='min-h-screen'>{children}</main>
             </ThemeProvider>
           </CartProvider>
