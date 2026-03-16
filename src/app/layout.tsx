@@ -5,9 +5,10 @@ import { CartProvider } from '@/context/CartContext';
 import Navbar from '@/components/Navbar';
 import { ThemeProvider } from '@/components/theme-provider';
 import Footer from '@/components/Footer';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Ecom',
+  title: 'Candle Dream',
   description: 'Mini E-commerce app',
 };
 
@@ -22,11 +23,15 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <ThemeProvider>
-              <Navbar />
+              <Suspense fallback={null}>
+                <Navbar />
+              </Suspense>
+              <Footer />
               <main className='min-h-screen'>{children}</main>
             </ThemeProvider>
           </CartProvider>
         </AuthProvider>
+
         <Footer />
       </body>
     </html>

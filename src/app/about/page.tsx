@@ -1,18 +1,8 @@
 'use client';
 
 import { Heart, ShieldCheck, Leaf } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
 
 export default function AboutPage() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return null;
-  }
   return (
     <main className='bg-white text-neutral-900'>
       <section className='mx-auto max-w-3xl px-6 py-24 text-center'>
@@ -22,6 +12,7 @@ export default function AboutPage() {
             Slow Living
           </span>
         </h1>
+
         <p className='text-lg text-neutral-500 leading-relaxed font-light'>
           At{' '}
           <span className='font-bold text-black uppercase tracking-widest'>
@@ -40,14 +31,17 @@ export default function AboutPage() {
             className='w-full h-[500px] object-cover'
           />
         </div>
+
         <div className='space-y-6'>
           <h2 className='text-3xl font-bold'>Our Story</h2>
+
           <p className='text-neutral-600 leading-relaxed'>
             Founded in 2024 in Konya, our journey began with a simple passion:
             to create the cleanest, most fragrant, and most beautiful candles
             possible. What started in a small kitchen has grown into a boutique
             studio, but our hands-on approach remains the same.
           </p>
+
           <p className='text-neutral-600 leading-relaxed'>
             Every candle in our collection is meticulously handcrafted. We pour
             in small batches to ensure that every scent tells a story and every
@@ -62,32 +56,40 @@ export default function AboutPage() {
             <div className='p-4 bg-white rounded-full shadow-sm'>
               <Leaf className='h-6 w-6' />
             </div>
+
             <h3 className='font-bold uppercase tracking-widest text-sm'>
               Eco-Friendly
             </h3>
+
             <p className='text-sm text-neutral-500'>
               We use only 100% natural soy wax and lead-free cotton wicks.
             </p>
           </div>
+
           <div className='flex flex-col items-center space-y-4'>
             <div className='p-4 bg-white rounded-full shadow-sm'>
               <Heart className='h-6 w-6' />
             </div>
+
             <h3 className='font-bold uppercase tracking-widest text-sm'>
               Handcrafted
             </h3>
+
             <p className='text-sm text-neutral-500'>
               Each piece is individually poured and finished by hand in our
               studio.
             </p>
           </div>
+
           <div className='flex flex-col items-center space-y-4'>
             <div className='p-4 bg-white rounded-full shadow-sm'>
               <ShieldCheck className='h-6 w-6' />
             </div>
+
             <h3 className='font-bold uppercase tracking-widest text-sm'>
               Premium Quality
             </h3>
+
             <p className='text-sm text-neutral-500'>
               Only the finest botanical oils for a clean and long-lasting scent.
             </p>
