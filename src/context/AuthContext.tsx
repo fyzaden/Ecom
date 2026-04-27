@@ -1,67 +1,37 @@
 'use client';
 
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from 'react';
-
+import { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '@/lib/firebase';
+import { AppUser } from '@/types/user';
 
-interface AppUser {
-  id: string;
-  email: string;
-  role: string;
-}
-
-interface AuthContextType {
-  user: AppUser | null;
-  loading: boolean;
-}
-
-const AuthContext = createContext<AuthContextType>({
+const AuthContext = createContext<{ user: AppUser | null; loading: boolean }>({
   user: null,
   loading: true,
 });
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!firebaseUser) {
+    return onAuthStateChanged(auth, async (fbUser) => {
+      if (!fbUser) {
         setUser(null);
         setLoading(false);
         return;
       }
 
-      const userDocRef = doc(db, 'users', firebaseUser.uid);
-      const userSnap = await getDoc(userDocRef);
-
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-        setUser({
-          id: firebaseUser.uid,
-          email: firebaseUser.email!,
-          role: data.role,
-        });
-      } else {
-        setUser({
-          id: firebaseUser.uid,
-          email: firebaseUser.email!,
-          role: 'Customer',
-        });
-      }
+      const snap = await getDoc(doc(db, 'users', fbUser.uid));
+      setUser({
+        id: fbUser.uid,
+        email: fbUser.email!,
+        role: snap.data()?.role ?? 'Customer',
+      });
 
       setLoading(false);
     });
-
-    return () => unsubscribe();
   }, []);
 
   return (

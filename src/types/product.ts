@@ -5,30 +5,36 @@ export interface Product {
   brand: string;
   serialNumber: string;
   price: {
-    number: number;
+    amount: number;
     currency: string;
   };
+  stripeProductId?: string;
+  stripePriceId?: string;
   taxRate: number;
-  image: string;
-  carategory: string;
+  images?: string[];
   stock: number;
   draft: boolean;
   discount?: {
     rate: number;
   };
-  craetedAt: Date;
-  updatedAt: Date;
+  createdAt: any;
+  updatedAt: any;
 }
 
 export interface CartItem {
+  id: string;
   productId: string;
+  title: string;
+  price: number;
+  image?: string;
+  stripePriceId: string;
   quantity: number;
   userId?: string;
 }
 
 export interface User {
   id: string;
-  role: 'Admin ' | 'Customer' | 'SuperAdmin';
+  role: 'Admin' | 'Customer' | 'SuperAdmin';
   email: string;
   address?: {
     line1: string;

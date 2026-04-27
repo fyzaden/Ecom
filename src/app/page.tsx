@@ -1,19 +1,17 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
-export default function Home() {
-  const { user, loading } = useAuth();
+import Hero from '@/components/Hero';
+import ProductGrid from '@/components/ProductGrid';
+import { Suspense } from 'react';
 
-  if (loading) return <p>Loading...</p>;
+export default function Home() {
   return (
-    <div className='p-6'>
-      {user ? (
-        <p>
-          Logged in as {user.email} ({user.role})
-        </p>
-      ) : (
-        <p>Not logged in</p>
-      )}
+    <div>
+      <Hero />
+
+      <Suspense fallback={<p className='px-6 py-10'>Loading products...</p>}>
+        <ProductGrid />
+      </Suspense>
     </div>
   );
 }

@@ -1,74 +1,109 @@
 'use client';
 
-import { useState } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 export default function NewProductPage() {
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [images, setImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const uploadImages = async (files: FileList) => {
+    const uploaded: string[] = [];
 
-    await addDoc(collection(db, 'products'), {
-      title,
-      price: {
-        amount: Number(price),
-        currency: 'EUR',
-      },
-      draft: false,
-      stock: 10,
-      category: 'general',
-      taxRate: 18,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+    for (const file of Array.from(files)) {
+      const fd = new FormData();
+      fd.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: fd,
+      });
+
+      const data = await res.json();
+      uploaded.push(data.url);
+    }
+
+    setImages((prev) => [...prev, ...uploaded]);
+  };
+
+  const submit = async () => {
+    if (!title || !price) {
+      alert('Title and price required');
+      return;
+    }
+
+    setLoading(true);
+
+    await fetch('/api/admin/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        description,
+        price: Number(price),
+        images,
+      }),
     });
 
-    alert('Product created');
+    setLoading(false);
+
     setTitle('');
+    setDescription('');
     setPrice('');
+    setImages([]);
+
+    alert('Product created with Stripe');
   };
 
   return (
     <ProtectedRoute role='Admin'>
-      <div className='flex justify-center p-6'>
-        <Card className='w-full max-w-md'>
-          <CardHeader>
-            <CardTitle>Create Product</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className='space-y-4'>
-              <div>
-                <Label>Title</Label>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                />
-              </div>
+      <div className='p-6 space-y-4 max-w-md'>
+        <h1 className='text-2xl font-semibold'>Add New Product</h1>
 
-              <div>
-                <Label>Price</Label>
-                <Input
-                  type='number'
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  required
-                />
-              </div>
+        <Input
+          placeholder='Title'
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
+        />
 
-              <Button type='submit' className='w-full'>
-                Create
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <Input
+          placeholder='Description'
+          onChange={(e) => setDescription(e.target.value)}
+          value={description}
+        />
+
+        <Input
+          type='number'
+          placeholder='Price'
+          onChange={(e) => setPrice(e.target.value)}
+          value={price}
+        />
+        <Input
+          type='file'
+          multiple
+          accept='image/*'
+          onChange={(e) => e.target.files && uploadImages(e.target.files)}
+        />
+
+        <div className='flex gap-2'>
+          {images.map((img) => (
+            <img
+              key={img}
+              src={img}
+              alt='product'
+              className='w-20 h-20 object-cover rounded border'
+            />
+          ))}
+        </div>
+
+        <Button onClick={submit} disabled={loading}>
+          Create Product
+        </Button>
       </div>
     </ProtectedRoute>
   );
